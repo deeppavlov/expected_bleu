@@ -7,3 +7,6 @@ Implementation lower bound from paper u can find in ``` eBLEU_from_paper.py ```
 
 
 ``` bleu.ipynb ``` - the same as ```BLEU_results.ipynb``` but contain only example for unigrams (word modified precision)
+
+
+NOTE: to reduce complexity of out algorithm we iterate only over words from reference (since all other terms in sum are zeros)
