@@ -4,13 +4,39 @@ from torch.nn import functional
 from torch.autograd import Variable
 import numpy as np
 import os
-from util import CUDA_wrapper
 from functools import reduce
 from copy import deepcopy as copy
 import time
 
+class SoftmaxWithTemperature:
+    def __init__(self, temperature):
+        """
+        formula: softmax(x/temperature)
+        """
+        self.temperature  = temperature
+        self.softmax = torch.nn.Softmax()
+
+    def __call__(self, x, temperature=None):
+        if not temperature is None:
+            return self.softmax(x / temperature)
+        else:
+            return self.softmax(x / self.temperature)
+
+def CUDA_wrapper(tensor):
+    use_cuda = torch.cuda.is_available()
+    if use_cuda:
+        return tensor.cuda()
+    else:
+        return tensor
+
+def fill_eye_diag(a):
+    _, s1, s2 = a.data.shape
+    dd = Variable(CUDA_wrapper(torch.eye(s1)))
+    zero_dd = 1 - dd
+    return a * zero_dd + dd
+
 class MultiBLEUMultiply:
-    def __init__(self, max_order=1, softmax_temperature=0.001, T_argmax=True,\
+    def __init__(self, max_order=4, softmax_temperature=0.001, T_argmax=True,\
                 std_temp=False):
         self.max_order = max_order
         self.T_argmax = T_argmax
@@ -41,6 +67,7 @@ class MultiBLEUMultiply:
                                     temperature=cur_temperature).view(shapeT)
         TR = T.bmm(R.transpose(1, 2))
         TT = T.bmm(T.transpose(1, 2))
+        # TT = fill_eye_diag(TT)
 
         reference_len = sum(reference_corpus_lens)
         tanslation_len = sum(translation_corpus_lens)
@@ -105,4 +132,4 @@ class MultiBLEUMultiply:
             else:
                 bp = 1E-2
         bleu = -geo_mean * bp
-        return bleu
+        return bleu, precisions
