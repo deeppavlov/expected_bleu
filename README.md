@@ -15,4 +15,4 @@ Our code inspired on this [tensorflow.NMT BLEU script](https://github.com/tensor
 ### BLEU3
 <img src="https://raw.githubusercontent.com/deepmipt/expected_bleu/master/images/BLEU3.png" width="720">
 
-NOTE: to reduce complexity of out algorithm we iterate only over words from reference (since all other terms in sum are zeros)
+NOTE: to reduce complexity of our algorithm we iterate only over words from reference (since all other terms in sum are zeros)
