@@ -38,7 +38,6 @@ class mBLEU:
             if self.std_temp:
                 cur_temperature = T.std()
                 if (np.random.rand(1)[0] > 0.99):
-                    print('-----cur_temperature------')
                     print(cur_temperature)
             T = self.sm(T.contiguous().view(-1, shapeT[2]),\
                                     temperature=cur_temperature).view(shapeT)
@@ -55,7 +54,8 @@ class mBLEU:
         all_t = [torch.sum(cur_t, 1)]
         all_tr = [torch.sum(cur_tr, 2)]
         def overlapper(t, tr):
-            return torch.sum((torch.min(t, tr) + 1E-10) / torch.max((t + 1E-10),CUDA_wrapper(Variable(torch.FloatTensor([1])))), 1)
+            return torch.sum((torch.min(t, tr) + 1E-10) / torch.max(\
+                (t + 1E-10),CUDA_wrapper(Variable(torch.FloatTensor([1])))), 1)
         overlap = overlapper(all_t[-1], all_tr[-1])
         matches_by_order[0] = torch.sum(overlap)
         possible_matches_by_order = [
@@ -86,10 +86,10 @@ class mBLEU:
             if possible_matches_by_order[i].data[0] > 0:
                 if i > 0:
                     precisions[i] = ((matches_by_order[i].float() + 1)\
-                                                /( possible_matches_by_order[i] + 1))
+                                        /( possible_matches_by_order[i] + 1))
                 else:
                     precisions[i] = (matches_by_order[i].float()\
-                                                /possible_matches_by_order[i])
+                                        /possible_matches_by_order[i])
             else:
                 precisions[i] = CUDA_wrapper(Variable(torch.FloatTensor([0])))
         if torch.min(torch.stack(precisions)).data[0] > 1E-3:

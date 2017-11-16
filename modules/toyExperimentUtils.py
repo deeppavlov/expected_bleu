@@ -40,10 +40,12 @@ def estimate_expectation(r_hot, probs, mbleu, length, n_exp = 100):
         for i in range(n_exp):
             samples = []
             for l in range(length):
-                samples.append(np.random.multinomial(1, p[l]/ np.sum(p[l]) - 1E-7))
+                samples.append(np.random.multinomial(1, \
+                                            p[l]/ np.sum(p[l]) - 1E-7))
             text = np.array(samples).astype(np.float32)
             bs.append(-mbleu(torch.unsqueeze(r_hot, 0),
-                            torch.unsqueeze(Variable(CUDA_wrapper(torch.from_numpy(text))), 0),
+                            torch.unsqueeze(\
+                            Variable(CUDA_wrapper(torch.from_numpy(text))), 0),
                             [10], [10])[0].data[0])
         bst.append(np.array(bs).mean())
     return bst

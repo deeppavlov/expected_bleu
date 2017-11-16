@@ -19,6 +19,8 @@ def one_hots(zeros, ix):
     return zeros
 
 def overlap(t, r_hot, r, f, temp, n):
+""" calculate overlap as in original BLEU script.
+see google's BLEU script for details """
     t_soft = f(t / temp)
     length = t.size()[0]
     v_size = t.size()[1]
