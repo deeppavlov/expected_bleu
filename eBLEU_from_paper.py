@@ -50,12 +50,11 @@ def overlap(t, r_hot, r, f, temp, n):
         pp = [t_soft[i + j] for j in range(n)]
         for m in M:
             reslicer = lambda x: r.data.shape[0] if x == 0 else x
-            y_prod = reduce(lambda x, y: (x * y).sum(0),\
-                                   [r_hot[j:reslicer(-n + 1 + j), m[j]] for j in range(n)])
-            if n == 1:
-                y_prod = y_prod.sum(0)
+            y_prod = reduce(mul,
+                     [r_hot[j:reslicer(-n + 1 + j), m[j]] for j in range(n)])
+            y_prod = y_prod.sum(0)
             p_prod = reduce(mul, \
-                                   [t_soft[j:reslicer(-n + 1 + j), m[j]] for j in range(n)])
+                     [t_soft[j:reslicer(-n + 1 + j), m[j]] for j in range(n)])
             denominator = 1 + p_prod.sum(0) - p_prod[i]
             pr = reduce(mul, [pp[j][m[j]] for j in range(n)])
 
