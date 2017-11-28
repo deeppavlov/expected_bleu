@@ -1,6 +1,7 @@
 import torch
 from torch.autograd import Variable
-from modules.expectedBLEU import bleu as ebleu
+# from modules.expectedBLEU import bleu as ebleu
+from modules.expectedBLEU import log_bleu as ebleu
 from modules.utils import CUDA_wrapper
 import numpy as np
 from IPython.display import set_matplotlib_formats
@@ -17,20 +18,23 @@ def training(t, r_hot, r, f, n, mbleu):
     bleus = []
     norms = []
     probs = []
-    lr = 100
-    opt = torch.optim.Adam([t], lr=1)
+    opt = torch.optim.Adam([t], lr=10)
+    gradients = []
     for i in range(100):
         b2 = ebleu(t, r_hot, r, f, 1, n)
         res.append(b2.data[0])
         probs.append(f(t).data.cpu().numpy())
         (-b2).backward()
+        # print("gradient of eblu")
+        # print(t.grad)
+        gradients.append(t.grad)
         opt.step()
         norms.append(t.grad.data.norm())
         hard_t = Variable(CUDA_wrapper(\
                         one_hots(list(t.size()), torch.max(t, dim=1)[1].data)))
         bleus.append(-mbleu(torch.unsqueeze(r_hot, 0),
                             torch.unsqueeze(hard_t, 0), [10], [10])[0].data[0])
-    return res, bleus, probs
+    return res, bleus, probs, gradients
 
 def estimate_expectation(r_hot, probs, mbleu, length, n_exp = 100):
     bs = []
