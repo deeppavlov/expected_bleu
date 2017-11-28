@@ -1,7 +1,7 @@
 # Differentiable lower bound for expected BLEU score
 We are using <img src="https://raw.githubusercontent.com/pytorch/pytorch/master/docs/source/_static/img/pytorch-logo-dark.png" width="100">
 
-Our code inspired on this [tensorflow.NMT BLEU script](https://github.com/tensorflow/nmt/blob/master/nmt/scripts/bleu.py)
+Our code is inspired by this [tensorflow.NMT BLEU script](https://github.com/tensorflow/nmt/blob/master/nmt/scripts/bleu.py)
 * ```BLEU_results.ipynb``` - results with graphs
 
 * ``` bleu.ipynb ``` - the same as ```BLEU_results.ipynb``` but contains only simple example for unigrams (word modified precision)
