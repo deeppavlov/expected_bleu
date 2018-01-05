@@ -14,6 +14,6 @@ Our code inspired on this [tensorflow.NMT BLEU script](https://github.com/tensor
 * * ``` modules/matrixBLEU.py ``` - implements computation of BLEU in matrix form (for degenerate distribution it coincides with  BLEU)
 * * ``` modules/utils.py ``` - support functions
 ### BLEU3
-<img src="https://raw.githubusercontent.com/deepmipt/expected_bleu/master/images/BLEU3.png" width="720">
+<img src="https://raw.githubusercontent.com/deepmipt/expected_bleu/master/images/BLEU4.png" width="720">
 
 NOTE: to reduce complexity of our algorithm we iterate only over words from reference (since all other terms in sum are zeros)
