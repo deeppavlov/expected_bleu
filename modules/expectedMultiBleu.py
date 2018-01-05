@@ -1,7 +1,6 @@
 import numpy as np
 import torch
 import torch.nn as nn
-import matplotlib.pyplot as plt
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.autograd import Variable
@@ -11,14 +10,13 @@ from copy import copy as copy
 from modules.matrixBLEU import mBLEU
 from modules.utils import CUDA_wrapper
 from collections import Counter
-from torch.cuda import LongTensor, FloatTensor
+from modules.utils import LongTensor, FloatTensor
 from functools import reduce
 from modules.utils import CUDA_wrapper
 import sys
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
-#%%
 
 class Reslicer:
     def __init__(self, max_lenght):
@@ -128,12 +126,8 @@ def bleu(p, r, translation_lengths, reference_lengths, max_order=4, smooth=False
         overlaps_list.append(calculate_overlap(p, r, n, reference_lengths))
     overlaps = torch.stack(overlaps_list)
     matches_by_order = torch.sum(overlaps, 1)
-    eprint(matches_by_order)
     possible_matches_by_order = torch.zeros(max_order)
     for n in range(1, max_order + 1):
-        # print(translation_length - n)
-        # possible_matches_by_order[n - 1] = translation_lengths - n
-        # possible_matches_by_order[n - 1] *= possible_matches_by_order[n - 1] > 0
         cur_pm = translation_lengths.float() - n + 1
         mask = cur_pm > 0
         cur_pm *= mask.float()
@@ -146,12 +140,11 @@ def bleu(p, r, translation_lengths, reference_lengths, max_order=4, smooth=False
         else:
             if possible_matches_by_order[i] > 0:
                 precisions[i] = matches_by_order[i] /\
-                                                possible_matches_by_order[i]
+                                            possible_matches_by_order[i]
             else:
                 precisions[i] = Variable(FloatTensor([0]))
     if torch.min(precisions[:max_order]).data[0] > 0:
         p_log_sum = sum([(1. / max_order) * torch.log(p) for p in precisions])
-        # eprint(p_log_sum)
         geo_mean = torch.exp(p_log_sum)
     else:
         geo_mean = torch.pow(\
@@ -167,16 +160,3 @@ def bleu(p, r, translation_lengths, reference_lengths, max_order=4, smooth=False
             bp = 1E-2
     bleu = -geo_mean * bp
     return bleu, precisions
-
-# A = torch.FloatTensor([[[1, 1, 1, 1], [2, 2, 2, 2], [3, 3, 3, 3], [4, 4, 4, 4]]])#,\
-                     # [[5,5,5,5], [6,6,6,6], [7,7,7,7], [8,8,8,8]]])
-
-
-#
-# A = Variable(FloatTensor([[[0.0, 1.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]],\
-#                        [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]]))
-# m = LongTensor([[1, 1, 2], [0, 1, 2]])
-# m_lengths = [3, 2]
-# len_x = LongTensor([3, 2])
-# n = 2
-# bleu(A, m, len_x, m_lengths, max_order=2)[0]

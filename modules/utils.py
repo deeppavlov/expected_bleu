@@ -1,5 +1,16 @@
 import torch
 
+if torch.cuda.is_available():
+    Tensor = torch.cuda.FloatTensor
+    FloatTensor = torch.cuda.FloatTensor
+    LongTensor = torch.cuda.LongTensor
+    ByteTensor = torch.cuda.ByteTensor
+else:
+    Tensor = torch.Tensor
+    FloatTensor = torch.FloatTensor
+    LongTensor = torch.LongTensor
+    ByteTensor = torch.ByteTensor
+
 def CUDA_wrapper(tensor):
     use_cuda = torch.cuda.is_available()
     if use_cuda:
