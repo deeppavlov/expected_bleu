@@ -154,9 +154,11 @@ def bleu(p, r, translation_lengths, reference_lengths, max_order=4, smooth=False
     if ratio > 1.0:
         bp = 1.0
     else:
-        if ratio > 1E-1:
+        THRESHOLD_RATIO = 1E-1
+        MIN_BP = 1E-2
+        if ratio > THRESHOLD_RATIO:
             bp = np.exp(1 - 1. / ratio)
         else:
-            bp = 1E-2
+            bp = MIN_BP
     bleu = -geo_mean * bp
     return bleu, precisions

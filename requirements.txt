@@ -1,0 +1,4 @@
+numpy==1.13.1
+matplotlib==2.0.2
+torch==0.2.0.post4
+ipython==6.2.1
