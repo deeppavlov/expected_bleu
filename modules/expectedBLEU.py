@@ -33,17 +33,9 @@ def overlap(t, r_hot, r, f, temp, n):
     M = [[from_ref[i + j] for j in range(n)] for i in range(len(from_ref) - n + 1)]
     mul = lambda x, y: x * y
     start_all = time.time()
-    cum_selecting_time = 0
-    cum_iterating_time = 0
     for i in range(length - n + 1):
         start_select_t_soft = time.time()
         pp = [t_soft[i + j] for j in range(n)]
-        # print('-' * 10 + 'selecting_time' + '-' * 10)
-        now_selecting_time = time.time() - start_select_t_soft
-        # print('selecting_time: {0:0.4f}'.format(now_selecting_time))
-        cum_selecting_time += now_selecting_time
-        start_iterating = time.time()
-        # print("length all m combos: {0:0.4f}".format(len(M)))
         ngram_calc_cum = 0
         for m in M:
             reslicer = lambda x: r.data.shape[0] + x
@@ -57,13 +49,6 @@ def overlap(t, r_hot, r, f, temp, n):
             ngram_calc_cum += time.time() - ngram_calc_start
             pr = reduce(mul, [pp[j][m[j]] for j in range(n)])
             res += torch.min(pr, pr * y_prod / denominator)
-        now_iterating_time = time.time() - start_iterating
-        # print('iterating_time: {0:0.4f}'.format(now_iterating_time))
-        # print('ngram_calc_cum: {0:0.4f}'.format(ngram_calc_cum))
-        cum_iterating_time += now_iterating_time
-    # print('cum_selecting_time: {0:0.4f}'.format(cum_selecting_time))
-    # print('cum_iterating_time: {0:0.4f}'.format(cum_iterating_time))
-    # print('-'*20)
     return res
 
 def precision(t, r_hot, r, f, temp, n):

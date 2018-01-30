@@ -1,5 +1,4 @@
 import torch
-from matplotlib import pyplot as plt
 from torch.nn import functional
 from torch.autograd import Variable
 import numpy as np
@@ -54,8 +53,10 @@ class mBLEU:
         all_t = [torch.sum(cur_t, 1)]
         all_tr = [torch.sum(cur_tr, 2)]
         def overlapper(t, tr):
-            return torch.sum((torch.min(t, tr) + 1E-10) / torch.max(\
-                (t + 1E-10),CUDA_wrapper(Variable(torch.FloatTensor([1])))), 1)
+            SMOOTH_CONST = 1E-10
+            return torch.sum((torch.min(t, tr) + SMOOTH_CONST) / torch.max(\
+                (t + SMOOTH_CONST),CUDA_wrapper(Variable(\
+                                                torch.FloatTensor([1])))), 1)
         overlap = overlapper(all_t[-1], all_tr[-1])
         matches_by_order[0] = torch.sum(overlap)
         possible_matches_by_order = [
@@ -103,9 +104,11 @@ class mBLEU:
         if ratio > 1.0:
             bp = 1.
         else:
-            if ratio > 1E-1:
+            THRESHOLD_RATIO = 1E-1
+            MIN_BP = 1E-2
+            if ratio > THRESHOLD_RATIO:
                 bp = np.exp(1 - 1. / ratio)
             else:
-                bp = 1E-2
+                bp = MIN_BP
         bleu = -geo_mean * bp
         return bleu, precisions
