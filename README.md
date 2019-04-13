@@ -1,3 +1,6 @@
+# WARNING
+Latest version is here [expected_bleu](https://github.com/deepmipt/diff_beam_search/tree/master/expected_bleu) (some bugs were fixed, pytorch 0.4 version)
+
 # Differentiable lower bound for expected BLEU score
 
 This is our implementation of lower bound for expected BLEU score. For details, see the corresponding [NIPS'17 workshop paper](https://arxiv.org/abs/1712.04708)
